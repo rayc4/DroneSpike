@@ -1,4 +1,5 @@
 import arcade
+import time
 
 SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 650
@@ -43,6 +44,7 @@ class GameWindow(arcade.Window):
 
     def setup(self):
         ''' Set up the game here. Call this function to restart the game.'''
+
         self.p1_score = 0
         self.p2_score = 0
 
@@ -173,6 +175,12 @@ class GameWindow(arcade.Window):
         self.keys_pressed = {'w':False, 'a':False, 'd':False, \
                              'up':False, 'left':False, 'right':False}
 
+        self.music = arcade.Sound("bgm.mp3")
+        self.music_player = self.music.play(0.5)
+        self.crowd = arcade.Sound("crowd.mp3")
+        self.crowd_player = self.crowd.play(0.25)
+        time.sleep(0.03)
+
     def on_key_press(self, key, modifiers):
         ''' Called whenever a key is pressed. '''
         if key == arcade.key.W:
@@ -264,8 +272,12 @@ class GameWindow(arcade.Window):
             self.winner = 1
         if self.p2_score == 7:
             self.winner = 2
-        self.physics_engine.step()
 
+        if self.crowd.get_stream_position(self.crowd_player) == 0.0:
+            self.crowd_player = self.crowd.play(0.25)
+        if self.music.get_stream_position(self.music_player) == 0.0:
+            self.music = self.music.play(0.25)
+        self.physics_engine.step()
 def main():
     window = GameWindow()
     window.setup()
